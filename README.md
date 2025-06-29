@@ -93,8 +93,8 @@ npm run dev
 
 ## 📎 Submission Links
 
-- 🔗 Live Demo: https://phoenix-medicare-app.netlify.app
-- 🔗 GitHub Repo: https://github.com/Berramdane-phoenix/Medicare-app  
+-  🔗 Live Demo: https://phoenix-medicare-application.netlify.app
+- 🔗 GitHub Repo: https://github.com/Berramdane-phoenix/Med-app
 - 🔗 Bolt.new Prototype: https://bolt.new/~/sb1-nkpxj9q5  
 - 🔗 Supabase Org: https://supabase.com/dashboard/project/kbvtwzezqhwxlvplxong
 
