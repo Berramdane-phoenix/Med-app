@@ -1,0 +1,34 @@
+/* Base styles */
+@use 'variables' as *;
+@use 'reset';
+@use 'typography';
+@use 'buttons';
+@use 'forms';
+@use 'layout';
+@use 'animations';
+@use 'utilities';
+
+/* Component styles */
+@use 'components/header';
+@use 'components/footer';
+@use 'components/navigation';
+@use 'components/sidebar';
+@use 'components/card';
+@use 'components/alert';
+@use 'components/modal';
+@use 'components/loader';
+@use 'components/calendar';
+@use 'components/appointment';
+
+/* Page-specific styles */
+@use 'pages/dashboard';
+@use 'pages/appointments';
+@use 'pages/medical-records';
+@use 'pages/doctors';
+@use 'pages/profile';
+@use 'pages/auth';
+@use 'pages/reminders';
+@use 'pages/prfpage';
+@use 'pages/notifications';
+@use 'pages/doctorsProfile';
+@use 'pages/vitals';

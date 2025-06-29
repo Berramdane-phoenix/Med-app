@@ -1,0 +1,167 @@
+@use 'variables' as *;
+/* Animation styles */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOutDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn $transition-normal both;
+}
+
+.animate-fade-out {
+  animation: fadeOut $transition-normal both;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight $transition-normal both;
+}
+
+.animate-slide-out-right {
+  animation: slideOutRight $transition-normal both;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft $transition-normal both;
+}
+
+.animate-slide-out-left {
+  animation: slideOutLeft $transition-normal both;
+}
+
+.animate-slide-in-up {
+  animation: slideInUp $transition-normal both;
+}
+
+.animate-slide-out-down {
+  animation: slideOutDown $transition-normal both;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.transition-all {
+  transition: all $transition-normal;
+}
+
+.transition-transform {
+  transition: transform $transition-normal;
+}
+
+.transition-opacity {
+  transition: opacity $transition-normal;
+}
+
+.transition-colors {
+  transition: background-color $transition-normal, border-color $transition-normal, color $transition-normal;
+}
+
+.hover-scale {
+  transition: transform $transition-fast;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.hover-elevate {
+  transition: box-shadow $transition-fast, transform $transition-fast;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+  }
+}

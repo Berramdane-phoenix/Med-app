@@ -1,0 +1,279 @@
+@use 'variables' as *;
+/* Button styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $border-radius-md;
+  font-weight: $font-weight-medium;
+  background-color: transparent;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  text-align: center;
+  cursor: pointer;
+  transition: all $transition-slow;
+  border: none;
+  outline: none;
+  white-space: nowrap;
+  color: $neutral-900;
+  
+  &:focus {
+    outline: $border-width-medium solid rgba($primary-500, 0.4);
+    outline-offset: 2px;
+  }
+  
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+  
+  svg {
+    margin-right: $spacing-2;
+  }
+}
+
+.btn-icon {
+  padding: $spacing-2;
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  font-size: $font-size-sm;
+  border-radius: $border-radius-full;
+  transition: $transition-normal;
+  color: $neutral-900;
+  
+  svg {
+    margin-right: 0;
+  }
+  &:focus, &:hover {
+    color: $primary-500;
+    background-color: transparent;
+  }
+  & .avatar {
+    transition: $transition-normal;
+  }
+  &:hover .avatar {
+    background-color: transparent;
+  }
+}
+
+.btn-sm {
+  padding: $spacing-1 $spacing-3;
+  font-size: $font-size-sm;
+  margin-bottom: $spacing-3;
+}
+
+.btn-lg {
+  padding: $spacing-2 $spacing-6;
+  font-size: $font-size-lg;
+}
+
+.btn-primary {
+  background-color: $primary-500;
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background-color: $primary-700;
+    transform: scale(.98);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: $primary-800;
+    transform: scale(.98);
+  }
+}
+
+.btn-secondary {
+  background-color: $secondary-400;
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background-color: $secondary-700;
+    transform: scale(.98);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: $secondary-800;
+    transform: scale(.98);
+  }
+}
+
+.btn-accent {
+  background-color: $accent-500;
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background-color: $accent-600;
+  }
+  
+  &:active:not(:disabled) {
+    background-color: $accent-700;
+  }
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: $border-width-thin solid currentColor;
+  
+  &.btn-primary {
+    color: $primary-600;
+    
+    &:hover:not(:disabled) {
+      background-color: rgba($primary-100, 0.5);
+    }
+    
+    &:active:not(:disabled) {
+      background-color: $primary-100;
+    }
+  }
+  
+  &.btn-secondary {
+    color: $secondary-600;
+    
+    &:hover:not(:disabled) {
+      background-color: rgba($secondary-100, 0.5);
+    }
+    
+    &:active:not(:disabled) {
+      background-color: $secondary-100;
+    }
+  }
+  .btn-warning {
+    color: $warning-700;
+    border: $border-width-thin solid $warning-700;
+
+    &:hover:not(:disabled) {
+      background-color: $warning-700;
+      color: white;
+    }
+  }
+}
+
+.btn-text {
+  background-color: transparent;
+  color: $primary-600;
+  padding: $spacing-1 $spacing-2;
+  
+  
+  &:hover:not(:disabled) {
+    background-color: rgba($primary-100, 0.5);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: $primary-100;
+  }
+}
+
+.btn-success {
+  background-color: $success-500;
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background-color: $success-700;
+  }
+}
+
+.btn-warning {
+  color: $warning-500;
+  border: $border-width-thin solid $warning-500;
+
+  &:hover:not(:disabled) {
+    background-color: $warning-700;
+    color: white;
+  }
+}
+
+.btn-error {
+  background-color: $error-500;
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background-color: $error-700;
+  }
+}
+
+.btn-group {
+  display: inline-flex;
+  
+  .btn {
+    border-radius: 0;
+    
+    &:first-child {
+      border-top-left-radius: $border-radius-md;
+      border-bottom-left-radius: $border-radius-md;
+    }
+    
+    &:last-child {
+      border-top-right-radius: $border-radius-md;
+      border-bottom-right-radius: $border-radius-md;
+    }
+  }
+}
+
+
+// // Buttons
+// .btn {
+
+//   &:focus {
+//     outline: none;
+//     box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+//   }
+
+//   &--primary {
+//     background: var(--color-primary);
+//     color: var(--color-text-inverse);
+
+//     &:hover {
+//       background: var(--color-primary-dark);
+//       transform: translateY(-1px);
+//     }
+
+//     &:active {
+//       transform: translateY(0);
+//     }
+//   }
+
+//   &--secondary {
+//     background: var(--color-bg-tertiary);
+//     color: var(--color-text-primary);
+//     border-color: var(--color-border);
+
+//     &:hover {
+//       background: var(--color-border-light);
+//       border-color: var(--color-border-dark);
+//     }
+//   }
+
+//   &--ghost {
+//     background: transparent;
+//     color: var(--color-text-secondary);
+
+//     &:hover {
+//       background: var(--color-bg-tertiary);
+//       color: var(--color-text-primary);
+//     }
+//   }
+
+//   &--small {
+//     padding: var(--spacing-xs) var(--spacing-sm);
+//     font-size: var(--font-size-xs);
+//   }
+
+//   &--icon {
+//     padding: var(--spacing-sm);
+
+//     .btn__icon {
+//       margin: 0;
+//     }
+//   }
+
+//   &__icon {
+//     width: 16px;
+//     height: 16px;
+//     flex-shrink: 0;
+//   }
+// }

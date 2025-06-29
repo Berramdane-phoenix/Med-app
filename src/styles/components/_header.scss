@@ -1,0 +1,378 @@
+@use 'variables' as *;
+.header {
+  padding: $spacing-3 0;
+
+  &__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    @media (min-width: $breakpoint-lg) {
+      text-align: left;
+      gap: 10%;
+    }
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $primary-700;
+
+    svg {
+      margin-right: $spacing-2;
+      color: $primary-600;
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      display: none;
+    }
+  }
+
+  &__nav {
+    display: none;
+
+    @media (min-width: $breakpoint-lg) {
+      display: flex;
+
+      ul {
+        display: flex;
+        flex-direction: row;
+        gap: $spacing-6;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        margin-left: 2.5rem;
+      }
+
+      li {
+        position: relative;
+
+        a {
+          color: $neutral-700;
+          font-weight: $font-weight-medium;
+          transition: color $transition-fast;
+
+          &:hover {
+            color: $primary-500;
+          }
+
+          &.active {
+            color: $primary-500;
+
+            &:after {
+              content: '';
+              position: absolute;
+              bottom: -$spacing-2;
+              left: 0;
+              width: 100%;
+              height: 2px;
+              background-color: $primary-500;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+  }
+
+  &__mobile-toggle {
+    display: block;
+    background: none;
+    border: none;
+    color: $neutral-700;
+    font-size: $font-size-xl;
+    cursor: pointer;
+    padding: $spacing-2;
+    border-radius: $border-radius-md;
+    transition: all $transition-fast;
+
+    &:hover {
+      background-color: $neutral-100;
+      color: $primary-600;
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      display: none;
+    }
+  }
+
+  &__notification {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 9px;
+      background-color: $error-500;
+      color: white;
+      font-size: $font-size-xs;
+      font-weight: $font-weight-bold;
+    }
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    .btn-icon {
+      padding: 0;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: $primary-100;
+      color: $primary-700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: $font-weight-bold;
+      border: 2px solid $primary-200;
+    }
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    padding: $spacing-5;
+  }
+}
+
+.container-fluid {
+  position: relative;
+}
+
+.mobile-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  justify-content: center;
+  align-items: center;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease, height 0.3s ease;
+
+  &.active {
+    opacity: 1;
+    height: 360px;
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    display: none;
+  }
+
+  li {
+    text-align: center;
+  }
+
+  .close {
+    display: none;
+    position: absolute;
+    right: 1rem;
+    top: 12px;
+    background: none;
+    border: none;
+    color: $neutral-700;
+    font-size: $font-size-xl;
+    cursor: pointer;
+    padding: $spacing-2;
+    border-radius: $border-radius-md;
+    transition: all $transition-fast;
+
+    @media (min-width: $breakpoint-sm) {
+      top: 18px;
+    }
+
+    &:hover {
+      background-color: $neutral-100;
+      color: $primary-600;
+    }
+
+    &.active {
+      display: block;
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      display: none;
+    }
+  }
+
+  &__header,
+  &__footer,
+  &__content {
+    width: 100%;
+  }
+
+  .logo,
+  &__content li a {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    transition: $transition-normal;
+    text-align: center;
+  }
+
+  &__content li a:hover {
+    color: $primary-600;
+    font-size: $font-size-lg;
+  }
+}
+
+// Dropdown menus: user profile and notifications
+
+.user-profile__dropdown,
+.notifications__dropdown {
+  position: absolute;
+  top: 50px;
+  z-index: 99999;
+  background-color: white;
+  padding: $spacing-6 $spacing-3;
+  box-shadow: $shadow-lg;
+  border-radius: 0 0 $border-radius-lg $border-radius-lg;
+  min-width: 260px;
+  max-width: calc(100vw - $spacing-6);
+
+  @media (min-width: $breakpoint-lg) {
+    max-width: 600px;
+  }
+
+  button {
+    margin-left: 0.5rem;
+  }
+
+
+}
+
+.notifications__dropdown {
+
+  width: calc(100vw - $spacing-12);
+  right: -96px;
+
+  @media (min-width: $breakpoint-lg) {
+    right: 0;
+    transform: translateX(0)
+  }
+
+}
+
+.user-profile__dropdown {
+  right: 0;
+}
+
+.user-profile__dropdown-a {
+  gap: $spacing-2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: $spacing-2;
+  margin: $spacing-1 0 $spacing-2;
+  transition: $transition-normal;
+  background: none;
+  border: none;
+  color: $neutral-700;
+  padding: $spacing-3;
+  font-size: $font-size-sm;
+
+  svg {
+    transition: $transition-normal;
+  }
+
+  &:hover,
+  &:focus,
+  &:focus-within {
+    transform: scale(1.05);
+    color: $primary-500;
+
+    svg {
+      color: $primary-500;
+    }
+  }
+}
+
+.empty-notification {
+  font-size: 0.875rem;
+  margin-bottom: $spacing-5;
+}
+
+.notifications__list {
+  padding: $spacing-2;
+}
+
+.notification-item {
+  padding: $spacing-2;
+  border-radius: $border-radius-sm;
+  background-color: white;
+  box-shadow: $shadow-md;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+
+
+  // background-color: $primary-100;
+  &.loading {
+    font-style: italic;
+  }
+
+  &.unread {
+    border-left: 3px solid $primary-500;
+
+    .notification-timestamp {
+      color: $primary-500;
+    }
+  }
+
+  &.read {
+    border-left: 3px solid $secondary-400;
+
+    .notification-timestamp {
+      color: $secondary-400;
+    }
+  }
+
+  .notification-title {
+    margin: 0 0 0.25rem 0;
+    font-weight: $font-weight-medium;
+    margin-left: $spacing-2;
+  }
+
+  .notification-message {
+    margin: 0 0 0.5rem 0;
+    font-size: $font-size-sm;
+    margin-left: $spacing-2;
+
+  }
+
+  .notification-timestamp {
+    margin: 0 0 0.5rem 0;
+    font-weight: $font-weight-medium;
+    margin-left: $spacing-2;
+  }
+}
+
+// Add keyframes for loader spinning
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

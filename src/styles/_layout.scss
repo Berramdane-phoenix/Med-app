@@ -1,0 +1,200 @@
+@use 'variables' as *;
+/* Layout styles */
+@use "sass:math";
+.container {
+  width: 100%;
+  padding-right: $spacing-4;
+  padding-left: $spacing-4;
+  margin-right: auto;
+  margin-left: auto;
+  
+  @media (min-width: $breakpoint-sm) {
+    max-width: 540px;
+  }
+  
+  @media (min-width: $breakpoint-md) {
+    max-width: 720px;
+  }
+  
+  @media (min-width: $breakpoint-lg) {
+    max-width: 960px;
+  }
+  
+  @media (min-width: $breakpoint-xl) {
+    max-width: 1140px;
+  }
+  
+  @media (min-width: $breakpoint-2xl) {
+    max-width: 1320px;
+  }
+}
+
+.container-fluid {
+  width: 100%;
+  padding-right: $spacing-4;
+  padding-left: $spacing-4;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -$spacing-2;
+  margin-left: -$spacing-2;
+}
+
+.col {
+  flex: 1 0 0%;
+  padding-right: $spacing-2;
+  padding-left: $spacing-2;
+}
+
+@for $i from 1 through 12 {
+  .col-#{$i} {
+    flex: 0 0 auto;
+    width: math.div(100%, 12) * $i;
+    padding-right: $spacing-2;
+    padding-left: $spacing-2;
+  }
+}
+
+@media (min-width: $breakpoint-sm) {
+  @for $i from 1 through 12 {
+    .col-sm-#{$i} {
+      flex: 0 0 auto;
+      width: math.div(100%, 12) * $i;
+      padding-right: $spacing-2;
+      padding-left: $spacing-2;
+    }
+  }
+}
+
+@media (min-width: $breakpoint-md) {
+  @for $i from 1 through 12 {
+    .col-md-#{$i} {
+      flex: 0 0 auto;
+      width: math.div(100%, 12) * $i;
+      padding-right: $spacing-2;
+      padding-left: $spacing-2;
+    }
+  }
+}
+
+@media (min-width: $breakpoint-lg) {
+  @for $i from 1 through 12 {
+    .col-lg-#{$i} {
+      flex: 0 0 auto;
+      width: math.div(100% , 12) * $i;
+      padding-right: $spacing-2;
+      padding-left: $spacing-2;
+    }
+  }
+}
+
+@media (min-width: $breakpoint-xl) {
+  @for $i from 1 through 12 {
+    .col-xl-#{$i} {
+      flex: 0 0 auto;
+      width: math.div(100%, 12) * $i;
+      padding-right: $spacing-2;
+      padding-left: $spacing-2;
+    }
+  }
+}
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+ 
+
+  &__header {
+    position: sticky;
+    top: 0;
+    z-index: $z-index-sticky;
+    background-color: white;
+    box-shadow: $shadow-md;
+    border-radius: 0 0 30px 30px;
+    @media (min-width: $breakpoint-lg) {
+      box-shadow: none;
+      border-radius: 0;
+    }
+  }
+  
+  &__main {
+    flex: 1 0 auto;
+    padding: $spacing-4 0;
+    background-color: $neutral-100;
+    border-radius: 0;
+    
+    @media (min-width: $breakpoint-md) {
+      padding: $spacing-6 $spacing-4;
+    }
+    @media (min-width: $breakpoint-lg) {
+      padding: $spacing-8 $spacing-5;
+      border-radius: 50px 0 0 0 ;
+    }
+    @media (min-width: $breakpoint-xl) {
+      // padding: 3.25rem 0 ;
+    }
+  }
+  
+  &__footer {
+    flex-shrink: 0;
+  }
+}
+
+
+.sidebar-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  
+  @media (min-width: $breakpoint-lg) {
+    flex-direction: row;
+  }
+  
+  &__sidebar {
+    width: 100%;
+    position: fixed;
+    z-index: $z-index-fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    
+    @media (min-width: $breakpoint-lg) {
+      width: 280px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+  }
+  
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    // background-color: white;
+  
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: $spacing-4;
+  
+  @media (min-width: $breakpoint-sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  
+  @media (min-width: $breakpoint-xl) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

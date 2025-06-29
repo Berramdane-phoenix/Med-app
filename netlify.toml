@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "dist" # ← Vite outputs to "dist" not ".next"
+
+[functions]
+  directory = "netlify/functions"
+
+[dev]
+  port = 8888

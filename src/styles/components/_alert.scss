@@ -1,0 +1,155 @@
+@use 'variables' as *;
+.alert {
+  position: relative;
+  padding: $spacing-3 $spacing-4;
+  border-radius: $border-radius-md;
+  margin-bottom: $spacing-4;
+  
+  &__title {
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-1;
+    display: flex;
+    align-items: center;
+    
+    svg {
+      margin-right: $spacing-2;
+    }
+  }
+  
+  &__content {
+    padding-left: $spacing-6;
+  }
+  
+  &__close {
+    position: absolute;
+    top: $spacing-3;
+    right: $spacing-3;
+    background: none;
+    border: none;
+    color: currentColor;
+    opacity: 0.6;
+    cursor: pointer;
+    
+    &:hover {
+      opacity: 1;
+    }
+  }
+  
+  &--info {
+    background-color: $info-100;
+    color: $info-700;
+  }
+  
+  &--success {
+    background-color: $success-100;
+    color: $success-700;
+  }
+  
+  &--warning {
+    background-color: $warning-100;
+    color: $warning-700;
+  }
+  
+  &--error {
+    background-color: $error-100;
+    color: $error-700;
+  }
+}
+
+.toast {
+  position: fixed;
+  bottom: $spacing-4;
+  right: $spacing-4;
+  z-index: $z-index-tooltip;
+  min-width: 300px;
+  max-width: 100%;
+  background-color: white;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-lg;
+  overflow: hidden;
+  display: flex;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all $transition-normal;
+  
+  &.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  &__icon {
+    width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &--info {
+      background-color: $info-700;
+      color: white;
+    }
+    
+    &--success {
+      background-color: $success-500;
+      color: white;
+    }
+    
+    &--warning {
+      background-color: $warning-500;
+      color: $neutral-900;
+    }
+    
+    &--error {
+      background-color: $error-500;
+      color: white;
+    }
+  }
+  
+  &__content {
+    flex: 1;
+    padding: $spacing-3;
+  }
+  
+  &__title {
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-1;
+  }
+  
+  &__message {
+    color: $neutral-600;
+    font-size: $font-size-sm;
+  }
+  
+  &__close {
+    position: absolute;
+    top: $spacing-2;
+    right: $spacing-2;
+    background: none;
+    border: none;
+    color: $neutral-500;
+    cursor: pointer;
+    
+    &:hover {
+      color: $neutral-700;
+    }
+  }
+  
+  &__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background-color: $primary-500;
+    width: 100%;
+    transform-origin: left;
+    animation: progress 5s linear forwards;
+  }
+}
+
+@keyframes progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}

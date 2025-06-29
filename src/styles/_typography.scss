@@ -1,0 +1,136 @@
+@use 'variables' as *;
+/* Typography styles */
+h1, h2, h3, h4, h5, h6 {
+  margin: $spacing-4 0;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: $neutral-900;
+}
+
+h1 {
+  font-size: $font-size-3xl;
+  
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-4xl;
+  }
+}
+
+h2 {
+  font-size: $font-size-2xl;
+  
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-3xl;
+  }
+}
+
+h3 {
+  font-size: $font-size-xl;
+  
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-2xl;
+  }
+}
+
+h4 {
+  font-size: $font-size-lg;
+  
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-xl;
+  }
+}
+
+h5 {
+  font-size: $font-size-base;
+  
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-lg;
+  }
+}
+
+h6 {
+  font-size: $font-size-sm;
+  
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-base;
+  }
+}
+h1, h2, h3, h4, h5, h6 {
+  color: $neutral-700;
+}
+p {
+  margin-bottom: $spacing-4;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+}
+
+.text-xs {
+  font-size: $font-size-xs;
+}
+
+.text-sm {
+  font-size: $font-size-sm;
+}
+
+.text-base {
+  font-size: $font-size-base;
+}
+
+.text-lg {
+  font-size: $font-size-lg;
+}
+
+.text-xl {
+  font-size: $font-size-xl;
+}
+
+.text-2xl {
+  font-size: $font-size-2xl;
+}
+
+.font-regular {
+  font-weight: $font-weight-regular;
+}
+
+.font-medium {
+  font-weight: $font-weight-medium;
+}
+
+.font-bold {
+  font-weight: $font-weight-bold;
+}
+
+.text-primary {
+  color: $primary-700;
+}
+
+.text-secondary {
+  color: $secondary-700;
+}
+
+.text-accent {
+  color: $accent-600;
+}
+
+.text-success {
+  color: $success-700;
+}
+
+.text-warning {
+  color: $warning-700;
+}
+
+.text-error {
+  color: $error-700;
+}
+
+.text-neutral {
+  color: $neutral-700;
+}
+
+.text-light {
+  color: $neutral-100;
+}
+
+.text-dark {
+  color: $neutral-900;
+}

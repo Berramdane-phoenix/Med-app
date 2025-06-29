@@ -1,0 +1,207 @@
+
+@use 'variables' as *; 
+/* Form styles */
+.form-group {
+  margin-bottom: $spacing-4;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: $spacing-1;
+  font-weight: $font-weight-medium;
+  color: $neutral-700;
+  font-size: $font-size-sm;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: $spacing-2 $spacing-3;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+  color: $neutral-800;
+  position: relative; 
+  background-color: $neutral-50;
+  background-clip: text;
+  border: $border-width-thin solid $neutral-300;
+  border-radius: $border-radius-lg;
+  cursor: pointer;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+  
+  &:focus, &:hover {
+    border-color: $primary-500;
+    background-color: white;
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba($primary-500, 0.25);
+  }
+  
+  &::placeholder {
+    color: $neutral-500;
+    opacity: 1;
+    background-color: white;
+  }
+  
+  &:disabled,
+  &[readonly] {
+    background-color: $neutral-200;
+    opacity: 1;
+  }
+  
+  &.is-invalid {
+    border-color: $error-500;
+    
+    &:focus {
+      box-shadow: 0 0 0 3px rgba($error-500, 0.25);
+    }
+  }
+}
+
+select.form-control {
+  padding-right: $spacing-8;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $spacing-3 center;
+  background-size: 16px 16px;
+  appearance: none;
+}
+
+textarea.form-control {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-text {
+  display: block;
+  margin-top: $spacing-1;
+  font-size: $font-size-sm;
+  color: $neutral-600;
+}
+
+.form-error, .error-text {
+  display: block;
+  margin-top: $spacing-1;
+  font-size: $font-size-xs;
+  color: $error-700;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-2;
+  
+  input[type="checkbox"],
+  input[type="radio"] {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin-right: $spacing-2;
+    appearance: none;
+    border: $border-width-thin solid $neutral-400;
+    background-color: $neutral-50;
+    transition: all $transition-fast;
+    
+    &:checked {
+      background-color: $primary-600;
+      border-color: $primary-600;
+    }
+    
+    &:focus {
+      outline: 0;
+      box-shadow: 0 0 0 3px rgba($primary-500, 0.25);
+    }
+  }
+  
+  input[type="checkbox"] {
+    border-radius: $border-radius-sm;
+    
+    &:checked {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd'%3E%3C/path%3E%3C/svg%3E");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: 14px 14px;
+    }
+  }
+  
+  input[type="radio"] {
+    border-radius: 50%;
+    
+    &:checked {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Ccircle cx='8' cy='8' r='4'%3E%3C/circle%3E%3C/svg%3E");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: 16px 16px;
+    }
+  }
+  
+  label {
+    margin-bottom: 0;
+    font-size: $font-size-sm;
+    color: $neutral-800;
+  }
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+  
+  .form-control {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+  }
+  
+  .input-group-text {
+    display: flex;
+    align-items: center;
+    padding: $spacing-2 $spacing-3;
+    font-size: $font-size-base;
+    font-weight: $font-weight-regular;
+    line-height: 1.5;
+    color: $neutral-600;
+    text-align: center;
+    white-space: nowrap;
+    background-color: $neutral-200;
+    border: $border-width-thin solid $neutral-300;
+    border-right: none;
+    border-radius: $border-radius-lg;
+  }
+  
+  > :first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  
+  > :last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  
+  > :not(:first-child):not(:last-child) {
+    border-radius: 0;
+  }
+}
+
+.notes-textarea {
+  border: 1px solid $primary-300;
+  display: block;
+  width: 100%;
+  padding: .5rem;
+  font-size: .875rem;
+  // margin: $spacing-4 0;
+  border-radius: $border-radius-md;
+  transition: $transition-slow;
+  &:hover, &:focus, &:focus-visible {
+    border: 2px solid $primary-500;
+
+  }
+
+}
+
+.terms {
+  font-size: $font-size-xs;
+  color :$neutral-700;
+}
