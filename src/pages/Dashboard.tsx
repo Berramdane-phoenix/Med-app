@@ -483,7 +483,7 @@ const Dashboard = () => {
                 {!showForm && (
                   <button 
                     onClick={() => setShowForm(true)} 
-                    className="btn btn-primary btn--small"
+                    className="btn btn--primary btn--small"
                   >
                     <Plus className="btn__icon" size={16}/>
                     Add

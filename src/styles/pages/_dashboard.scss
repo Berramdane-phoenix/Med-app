@@ -215,7 +215,7 @@
     grid-template-columns: 1fr 1fr;
   }
 
-  @media (min-width: $breakpoint-lg) {
+  @media (min-width: $breakpoint-xl) {
     grid-template-columns: 2fr 1fr;
   }
 }
