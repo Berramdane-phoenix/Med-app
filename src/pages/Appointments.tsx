@@ -198,7 +198,7 @@ export default function Appointments() {
       <h3 className="empty-state__title">{title}</h3>
       <p className="empty-state__message">{message}</p>
       {showAction && (
-        <Link to={actionHref} className="empty-state__action">
+        <Link to={actionHref} className="ebtn btn-primary btn-lg">
           <Plus className="empty-state__action-icon" aria-hidden="true" />
           {actionText}
         </Link>
@@ -606,107 +606,115 @@ export default function Appointments() {
   };
 
   const fetchSlotsForDay = async (dayStr: string) => {
-    if (!selectedAppointmentId || !selectedDoctorId) return;
-    setLoadingSlots(true);
-    setSlots([]);
+  if (!selectedAppointmentId || !selectedDoctorId) return;
 
-    try {
-      // Fetch appointment duration
-      const { data: apt, error: e1 } = await supabase
-        .from("appointments")
-        .select("duration")
-        .eq("id", selectedAppointmentId)
-        .single();
-      if (e1 || !apt) throw new Error("Failed to fetch appointment details");
+  setLoadingSlots(true);
+  setSlots([]);
 
-      const dur = parseInt(apt.duration || "30", 10);
+  try {
+    // Fetch current appointment duration
+    const { data: apt, error: e1 } = await supabase
+      .from("appointments")
+      .select("duration")
+      .eq("id", selectedAppointmentId)
+      .single();
+    if (e1 || !apt) throw new Error("Failed to fetch appointment details");
 
-      // Fetch doctor info
-      const { data: doctor, error: e2 } = await supabase
-        .from("doctors")
-        .select("available_days, working_hours, slot_duration_minutes")
-        .eq("id", selectedDoctorId)
-        .single();
-      if (e2 || !doctor) throw new Error("Failed to fetch doctor details");
+    const dur = parseInt(apt.duration || "30", 10);
 
-      let workingHours = doctor.working_hours;
-      if (typeof workingHours === "string") {
-        workingHours = JSON.parse(workingHours);
-      }
+    // Fetch doctor availability info
+    const { data: doctor, error: e2 } = await supabase
+      .from("doctors")
+      .select("available_days, working_hours, slot_duration_minutes")
+      .eq("id", selectedDoctorId)
+      .single();
+    if (e2 || !doctor) throw new Error("Failed to fetch doctor details");
 
-      const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-      const dayDate = new Date(dayStr + "T00:00:00");
-      const dayName = daysOfWeek[dayDate.getDay()];
-
-      const availableDaysLower = doctor.available_days.map((d: string) => d.toLowerCase());
-
-      if (!availableDaysLower.includes(dayName.toLowerCase())) {
-        setSlots([]);
-        setLoadingSlots(false);
-        return;
-      }
-
-      const [startHour, startMinute] = workingHours.start.split(":").map(Number);
-      const [endHour, endMinute] = workingHours.end.split(":").map(Number);
-
-      const startTime = new Date(dayDate);
-      startTime.setHours(startHour, startMinute, 0, 0);
-
-      const endTime = new Date(dayDate);
-      endTime.setHours(endHour, endMinute, 0, 0);
-
-      const slotDurationMs = (doctor.slot_duration_minutes || 30) * 60 * 1000;
-
-      // Fetch existing appointments
-      const dayStart = new Date(dayStr + "T00:00:00").toISOString();
-      const dayEnd = new Date(dayStr + "T23:59:59").toISOString();
-
-      const { data: booked, error: e3 } = await supabase
-        .from("appointments")
-        .select("datetime, duration")
-        .eq("doctor_id", selectedDoctorId)
-        .gte("datetime", dayStart)
-        .lte("datetime", dayEnd)
-        .neq("id", selectedAppointmentId)
-        .in("status", ["pending", "confirmed", "rescheduled"]);
-      if (e3) throw e3;
-
-      const slots: Slot[] = [];
-      let slotTime = new Date(startTime);
-      const now = new Date();
-
-      while (slotTime.getTime() + slotDurationMs <= endTime.getTime()) {
-        const slotEnd = new Date(slotTime.getTime() + slotDurationMs);
-        const isPast = slotTime <= now;
-
-        const overlaps = booked?.some(b => {
-          const bStart = new Date(b.datetime);
-          const bDuration = parseInt(b.duration || "30", 10);
-          const bEnd = new Date(bStart.getTime() + bDuration * 60000);
-          return (slotTime < bEnd) && (slotEnd > bStart);
-        }) ?? false;
-
-        const isAvailable = !isPast && !overlaps;
-
-        slots.push({ 
-          dateTime: slotTime.toISOString(), 
-          booked: overlaps,
-          isPast,
-          isAvailable
-        });
-        
-        slotTime = new Date(slotTime.getTime() + slotDurationMs);
-      }
-
-      setSlots(slots);
-    } catch (error) {
-      console.error("Error fetching slots:", error);
-      setSlots([]);
-      toast.error("Failed to load available time slots");
-    } finally {
-      setLoadingSlots(false);
+    let workingHours = doctor.working_hours;
+    if (typeof workingHours === "string") {
+      workingHours = JSON.parse(workingHours);
     }
-  };
+
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayDate = new Date(dayStr + "T00:00:00");
+    const dayName = daysOfWeek[dayDate.getDay()];
+
+    const availableDaysLower = doctor.available_days.map((d: string) => d.toLowerCase());
+
+    // Check if doctor works that day
+    if (!availableDaysLower.includes(dayName.toLowerCase())) {
+      setSlots([]);
+      setLoadingSlots(false);
+      return;
+    }
+
+    const [startHour, startMinute] = workingHours.start.split(":").map(Number);
+    const [endHour, endMinute] = workingHours.end.split(":").map(Number);
+
+    const startTime = new Date(dayDate);
+    startTime.setHours(startHour, startMinute, 0, 0);
+
+    const endTime = new Date(dayDate);
+    endTime.setHours(endHour, endMinute, 0, 0);
+
+    const slotDurationMs = (doctor.slot_duration_minutes || 30) * 60 * 1000;
+
+    // Fetch existing booked appointments for the doctor on that day except the current appointment
+    const dayStart = new Date(dayStr + "T00:00:00").toISOString();
+    const dayEnd = new Date(dayStr + "T23:59:59").toISOString();
+
+    const { data: booked, error: e3 } = await supabase
+      .from("appointments")
+      .select("datetime, duration")
+      .eq("doctor_id", selectedDoctorId)
+      .gte("datetime", dayStart)
+      .lte("datetime", dayEnd)
+      .neq("id", selectedAppointmentId)
+      .in("status", ["pending", "confirmed", "rescheduled"]);
+    if (e3) throw e3;
+
+    const slots: Slot[] = [];
+    let slotTime = new Date(startTime);
+    const now = new Date();
+
+    while (slotTime.getTime() + slotDurationMs <= endTime.getTime()) {
+      const slotEnd = new Date(slotTime.getTime() + slotDurationMs);
+      const isPast = slotTime <= now;
+
+      // Use appointment duration `dur` to check overlaps
+      const overlaps = booked?.some(b => {
+        const bStart = new Date(b.datetime);
+        const bDuration = parseInt(b.duration || "30", 10);
+        const bEnd = new Date(bStart.getTime() + bDuration * 60000);
+
+        // Check if slot with appointment duration overlaps
+        const slotEndWithDur = new Date(slotTime.getTime() + dur * 60000);
+
+        return (slotTime < bEnd) && (slotEndWithDur > bStart);
+      }) ?? false;
+
+      const isAvailable = !isPast && !overlaps;
+
+      slots.push({
+        dateTime: slotTime.toISOString(),
+        booked: overlaps,
+        isPast,
+        isAvailable
+      });
+      
+      slotTime = new Date(slotTime.getTime() + slotDurationMs);
+    }
+    console.log(slots)
+    setSlots(slots);
+  } catch (error) {
+    console.error("Error fetching slots:", error);
+    setSlots([]);
+    toast.error("Failed to load available time slots");
+  } finally {
+    setLoadingSlots(false);
+  }
+};
+
 
   const getAppointmentCategory = (a: Appointment) => {
     const d = new Date(a.datetime);
