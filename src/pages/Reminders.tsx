@@ -521,7 +521,7 @@ interface Reminder {
 
                         <div className="reminder-item__content">
                             <header className="reminder-item__header">
-                            <h3 id={`reminder-title-${reminder.id}`} className="reminder-item__title">
+                            <h3 id={`reminder-title-${reminder.id}`} className="reminder-item__title mb-2">
                                 {reminder.title}
                             </h3>
                             {isOverdue && (
@@ -536,17 +536,18 @@ interface Reminder {
                             )}
                             
                             <div className="reminder-item__meta">
-                            <time 
-                                className="reminder-item__time"
-                                dateTime={reminder.due_date}
-                            >
-                                <Calendar className="reminder-item__time-icon" aria-hidden="true" />
-                                Due: {formatReminderDate(reminder.due_date)}
-                            </time>
-                            <span className={`reminder-item__priority-label reminder-item__priority-label--${reminder.priority}`}>
+                                <time 
+                                    className="reminder-item__time"
+                                    dateTime={reminder.due_date}
+                                >
+                                    <Calendar className="reminder-item__time-icon" aria-hidden="true" />
+                                    Due: {formatReminderDate(reminder.due_date)}
+                                </time>
+                                
+                            </div>
+                            <span className={`reminder-item__priority-label mt-3 reminder-item__priority-label--${reminder.priority}`}>
                                 {getPriorityLabel(reminder.priority)}
                             </span>
-                            </div>
                         </div>
 
                         <div className="reminder-item__actions">

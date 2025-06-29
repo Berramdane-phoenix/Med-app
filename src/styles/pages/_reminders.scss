@@ -1,9 +1,9 @@
-
+@use 'variables' as *;
 // Reminders Page Main Layout
 .reminders-page {
     min-height: 100vh;
     background: var(--color-bg-secondary);
-    border-radius: var(--radius-xl);
+    border-radius: 30px 0  0 0;
 
     &__container {
         max-width: 1000px;
@@ -27,45 +27,6 @@
         }
     }
 }
-
-// Header
-// .header-content {
-//     display: flex;
-//     align-items: flex-start;
-//     justify-content: space-between;
-//     gap: var(--spacing-lg);
-
-//     @media (max-width: 640px) {
-//         flex-direction: column;
-//         gap: var(--spacing-md);
-//     }
-// }
-
-// .header-info {
-//     flex: 1;
-// }
-
-// .header-title {
-//     font-size: var(--font-size-3xl);
-//     font-weight: 700;
-//     color: var(--color-text-primary);
-//     margin: 0 0 var(--spacing-xs) 0;
-//     line-height: var(--line-height-tight);
-
-//     @media (max-width: 480px) {
-//         font-size: var(--font-size-2xl);
-//     }
-// }
-
-// .header-subtitle {
-//     font-size: var(--font-size-lg);
-//     color: var(--color-text-secondary);
-//     margin: 0;
-
-//     @media (max-width: 480px) {
-//         font-size: var(--font-size-base);
-//     }
-// }
 
 .header-stats {
     display: flex;
@@ -113,7 +74,7 @@
     &__icon {
         width: 16px;
         height: 16px;
-        color: var(--color-primary);
+        color: $primary-500;
         flex-shrink: 0;
     }
 
@@ -151,13 +112,13 @@
     font-size: var(--font-size-base);
     font-weight: 600;
     color: var(--color-text-inverse);
-    background: var(--color-primary);
+    background: $primary-500;
     cursor: pointer;
     transition: all var(--transition-fast);
     box-shadow: var(--shadow-sm);
 
     &:hover {
-        background: var(--color-primary-dark);
+        background: $primary-600;
         transform: translateY(-1px);
         box-shadow: var(--shadow-md);
     }
@@ -352,7 +313,7 @@
 
     &:focus {
         outline: none;
-        border-color: var(--color-primary);
+        border-color: $primary-500;
         box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
     }
 
@@ -421,10 +382,10 @@
 
     &--primary {
         color: var(--color-text-inverse);
-        background: var(--color-primary);
+        background: $primary-500;
 
         &:hover:not(:disabled) {
-            background: var(--color-primary-dark);
+            background: $primary-600;
             transform: translateY(-1px);
         }
     }
@@ -479,7 +440,7 @@
         width: 32px;
         height: 32px;
         border: 3px solid var(--color-border);
-        border-top: 3px solid var(--color-primary);
+        border-top: 3px solid $primary-500;
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }
@@ -534,7 +495,7 @@
         font-size: var(--font-size-base);
         font-weight: 600;
         color: var(--color-text-inverse);
-        background: var(--color-primary);
+        background: $primary-500;
         cursor: pointer;
         transition: all var(--transition-fast);
 
@@ -765,11 +726,11 @@
     }
 
     &--edit {
-        color: var(--color-primary);
+        color: $primary-500;
 
         &:hover {
-            border-color: var(--color-primary);
-            background: var(--color-primary);
+            border-color: $primary-500;
+            background: $primary-500;
             color: var(--color-text-inverse);
         }
     }

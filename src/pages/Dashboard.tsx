@@ -388,7 +388,7 @@ const Dashboard = () => {
             </div>
             <div className="content-card__body">
               <div className="quick-actions">
-                <button className="quick-action quick-action--primary">
+                <Link to="/appointments/book" className="quick-action quick-action--primary">
                   <div className="quick-action__icon quick-action__icon--primary">
                     <Calendar />
                   </div>
@@ -397,8 +397,8 @@ const Dashboard = () => {
                     <p className="quick-action__description">Schedule with your preferred doctor</p>
                   </div>
                   <ChevronRight className="quick-action__arrow" />
-                </button>
-                <button className="quick-action quick-action--success">
+                </Link>
+                <Link to="/medical-records" className="quick-action quick-action--success">
                   <div className="quick-action__icon quick-action__icon--success">
                     <FileText />
                   </div>
@@ -407,8 +407,8 @@ const Dashboard = () => {
                     <p className="quick-action__description">Access your medical history</p>
                   </div>
                   <ChevronRight className="quick-action__arrow" />
-                </button>
-                <button className="quick-action quick-action--warning">
+                </Link>
+                <Link to="/medications" className="quick-action quick-action--warning">
                   <div className="quick-action__icon quick-action__icon--warning">
                     <Pill />
                   </div>
@@ -417,8 +417,9 @@ const Dashboard = () => {
                     <p className="quick-action__description">Manage your prescriptions</p>
                   </div>
                   <ChevronRight className="quick-action__arrow" />
-                </button>
-                <button className="quick-action quick-action--info">
+                </Link>
+
+                <Link to="/vitals" className="quick-action quick-action--info">
                   <div className="quick-action__icon quick-action__icon--info">
                     <Activity />
                   </div>
@@ -427,7 +428,7 @@ const Dashboard = () => {
                     <p className="quick-action__description">View your health trends</p>
                   </div>
                   <ChevronRight className="quick-action__arrow" />
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -590,6 +591,11 @@ const Dashboard = () => {
                   ))}
                 </div>
               )}
+            </div>
+            <div className="d-flex align-items-center justify-content-end mb-4 mr-4">
+              <Link to="/reminders" className="btn btn--ghost btn--small">
+                View All <ChevronRight className="btn__icon" size={16} />
+              </Link>
             </div>
           </div>
         </div>
