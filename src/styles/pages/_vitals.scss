@@ -8,6 +8,14 @@
     @media (max-width: $breakpoint-lg) {
         border-radius: var(--radius-xl);
     }
+    .header-info {
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+    .header-actions {
+        justify-content: center;
+    }
     &__container {
         max-width: 1400px;
         margin: 0 auto;
@@ -79,11 +87,14 @@
 
 .header-back {
     margin-top: $spacing-1;
+    width: 30px;
+    height: 30px;
+    color: red;
 }
 
 .header-title {
     font-size: $font-size-3xl;
-    font-weight: $font-weight-bold;
+    font-weight: bold;
     color: #1e293b;
     margin: 0 0 $spacing-2 0;
     line-height: $line-height-tight;
@@ -173,7 +184,7 @@
 
     &__label {
         font-size: $font-size-sm;
-        font-weight: $font-weight-bold;
+        font-weight: bold;
         color: #64748b;
         margin: 0 0 $spacing-2 0;
         text-transform: uppercase;
@@ -182,7 +193,7 @@
 
     &__value {
         font-size: $font-size-2xl;
-        font-weight: $font-weight-bold;
+        font-weight: bold;
         color: #1e293b;
         margin: 0 0 $spacing-3 0;
         line-height: $line-height-tight;
@@ -245,7 +256,7 @@
 
 .chart-title {
     font-size: $font-size-xl;
-    font-weight: $font-weight-bold;
+    font-weight: bold;
     color: #1e293b;
     margin: 0 0 $spacing-1 0;
 }
@@ -320,7 +331,7 @@
 
 .recent-title {
     font-size: $font-size-lg;
-    font-weight: $font-weight-bold;
+    font-weight: bold;
     color: #1e293b;
     margin: 0;
 }
@@ -533,5 +544,375 @@
             animation-iteration-count: 1 !important;
             transition-duration: 0.01ms !important;
         }
+    }
+}
+
+.vitals-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, $neutral-100 0%, $neutral-50 100%);
+    padding: $spacing-6;
+
+    @media (max-width: $breakpoint-sm) {
+        padding: $spacing-4;
+    }
+}
+
+// Notification system
+.notification {
+    position: fixed;
+    top: $spacing-6;
+    right: $spacing-6;
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-4 $spacing-6;
+    border-radius: 1rem; // use your original $border-radius-lg if defined, else 1rem
+    box-shadow: 0 4px 6px rgba($neutral-900, 0.1); // approximate $shadow-lg
+    z-index: 1000; // keep your original $z-notification or adjust
+    animation: slideInRight 0.3s ease-out;
+    font-weight: $font-weight-medium;
+    font-size: $font-size-sm;
+    max-width: 400px;
+
+    &--success {
+        background: $success-500;
+        color: $neutral-50;
+    }
+
+    &--error {
+        background: $error-500;
+        color: $neutral-50;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+        top: $spacing-4;
+        right: $spacing-4;
+        left: $spacing-4;
+        max-width: none;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+// Header section
+.vitals-header {
+    background: $neutral-50;
+    border-radius: 1.5rem; // original $border-radius-xl
+    box-shadow: 0 1px 3px rgba($neutral-900, 0.08); // approximate $shadow-sm
+    padding: $spacing-8;
+    margin-bottom: $spacing-8;
+
+    @media (max-width: $breakpoint-sm) {
+        padding: $spacing-6;
+        margin-bottom: $spacing-6;
+    }
+
+    &__content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: $spacing-6;
+        gap: $spacing-4;
+
+        @media (max-width: $breakpoint-md) {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: $spacing-2;
+        font-size: $font-size-3xl;
+        font-weight: bold;
+        color: $neutral-900;
+        margin: 0;
+
+        @media (max-width: $breakpoint-sm) {
+            font-size: $font-size-2xl;
+        }
+    }
+
+    &__icon {
+        color: $primary-500;
+        flex-shrink: 0;
+    }
+
+    &__add-btn {
+        flex-shrink: 0;
+
+        @media (max-width: $breakpoint-md) {
+            align-self: flex-start;
+        }
+    }
+}
+
+// Controls section
+.vitals-controls {
+    gap: $spacing-4;
+    align-items: center;
+    justify-content: space-between;
+
+    @media (max-width: $breakpoint-sm) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $spacing-2;
+    }
+}
+
+// Search component
+.search-box {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+
+    @media (max-width: $breakpoint-sm) {
+        max-width: none;
+        width: 100%;
+    }
+
+    &__icon {
+        position: absolute;
+        left: $spacing-4;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $neutral-400;
+        z-index: 1;
+    }
+
+    &__input {
+        width: 100%;
+        padding: $spacing-2  $spacing-2 $spacing-2 $spacing-8;
+        border: 2px solid $neutral-200;
+        border-radius: $border-radius-md;
+        font-size: $font-size-sm;
+        transition: all 0.15s ease-in-out; 
+        background: $neutral-50;
+
+        &:focus {
+            outline: none;
+            border-color: $primary-500;
+            box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+        }
+
+        &::placeholder {
+            color: $neutral-400;
+        }
+    }
+}
+
+svg {
+    margin-right: 0 !important;
+}
+// Modal overlay
+.vitals-form-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba($neutral-900, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-6;
+    z-index: 1100; // your original $z-modal
+    animation: fadeIn 0.2s ease-out;
+
+    @media (max-width: $breakpoint-sm) {
+        padding: $spacing-4;
+        align-items: flex-start;
+        padding-top: $spacing-8;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+// Form component
+.vitals-form {
+    background: $neutral-50;
+    border-radius: 1.5rem; // $border-radius-xl
+    box-shadow: 0 10px 20px rgba($neutral-900, 0.15); // $shadow-xl approx
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: scaleIn 0.2s ease-out;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: $spacing-8;
+        border-bottom: 1px solid $neutral-200;
+        background: $neutral-100;
+
+        h2 {
+            margin: 0;
+            font-size: $font-size-xl;
+            font-weight: bold;
+            color: $neutral-900;
+        }
+    }
+
+    &__content {
+        flex: 1;
+        overflow-y: auto;
+        padding: $spacing-8;
+
+        @media (max-width: $breakpoint-sm) {
+            padding: $spacing-6;
+        }
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: $spacing-6;
+
+        @media (max-width: $breakpoint-sm) {
+            grid-template-columns: 1fr;
+            gap: $spacing-4;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: $spacing-4;
+        padding: $spacing-6 $spacing-8;
+        border-top: 1px solid $neutral-200;
+        background: $neutral-100;
+
+        @media (max-width: $breakpoint-sm) {
+            padding: $spacing-4 $spacing-6;
+        }
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+// Input fields
+.input {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+
+    label {
+        font-weight: bold;
+        font-size: $font-size-sm;
+        color: $neutral-800;
+    }
+
+    input,
+    select,
+    textarea {
+        padding: $spacing-2 $spacing-3;
+        border: 2px solid $neutral-200;
+        border-radius:$border-radius-md;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-regular;
+        background: $neutral-50;
+        transition: all 0.15s ease-in-out;
+
+        &:focus {
+            outline: none;
+            border-color: $primary-500;
+            box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+        }
+
+        &::placeholder {
+            color: $neutral-400;
+        }
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    &--error input,
+    &--error select,
+    &--error textarea {
+        border-color: $error-500;
+    }
+
+    .error-message {
+        font-size: $font-size-xs;
+        color: $error-500;
+        margin-top: $spacing-1;
+    }
+}
+
+// Table for vitals list
+.vitals-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: $neutral-50;
+    border-radius: 1.5rem; // $border-radius-xl
+    box-shadow: 0 4px 8px rgba($neutral-900, 0.1);
+    overflow: hidden;
+
+    th,
+    td {
+        padding: $spacing-4 $spacing-6;
+        text-align: left;
+        font-size: $font-size-sm;
+        color: $neutral-900;
+        border-bottom: 1px solid $neutral-200;
+    }
+
+    th {
+        background: $neutral-100;
+        font-weight: bold;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    tbody tr:hover {
+        background: $neutral-100;
+    }
+}
+
+// Responsive adjustments for table
+@media (max-width: $breakpoint-sm) {
+    .vitals-table {
+        display: block;
+        overflow-x: auto;
+        border-radius: 1rem;
     }
 }

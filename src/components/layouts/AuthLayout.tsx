@@ -20,7 +20,9 @@ function AuthLayout() {
     return () => clearTimeout(timer);
   }, [user]);
 
-  if (showSplash) return <SplashScreen />;
+  if (showSplash) return <SplashScreen onLoadComplete={function (): void {
+    throw new Error('Function not implemented.');
+  } } />;
   return (
     <div className="auth">
       <div className="auth__container">

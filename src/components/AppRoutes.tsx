@@ -26,6 +26,7 @@ import CookiePolicy from '../pages/CookiePolicy';
 import Vitals from '../pages/Vitals';
 import Reminders from '../pages/Reminders';
 import NotFound from '../pages/NotFound';
+import AddVitals  from "../pages/AddVitals";
 
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -128,6 +129,11 @@ function AppRoutes() {
             <Profile />
           </ProtectedRoute>
         } />
+        <Route path="/addVitals" element={
+          <ProtectedRoute>
+            <AddVitals />
+          </ProtectedRoute>
+        } />
         <Route path="/settings" element={
           <ProtectedRoute>
             <ProfileSettings />
@@ -153,7 +159,7 @@ function AppRoutes() {
       </Route>
   
       {/* Root redirect */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+    
     
     </Routes>
   );

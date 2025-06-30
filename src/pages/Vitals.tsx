@@ -408,13 +408,14 @@ const getLatestValue = (metric: MetricType) => {
         {/* Header */}
         <div className="vitals-page__header">
           <div className="header-content">
-            <div className="header-info">
-              <button 
+            <button 
                 onClick={() => navigate('/dashboard')}
-                className="btn btn--ghost btn--icon header-back"
+                className="btn btn--ghost btn--icon header-back "
               >
                 <ArrowLeft />
               </button>
+            <div className="header-info">
+              
               <div>
                 <h1 className="header-title">Health Vitals</h1>
                 <p className="header-subtitle">
@@ -425,7 +426,7 @@ const getLatestValue = (metric: MetricType) => {
             <div className="header-actions">
               <button
                 onClick={handleRefresh}
-                className={`btn btn--secondary ${isRefreshing ? 'btn--loading' : ''}`}
+                className={`btn  btn--ghost ${isRefreshing ? 'btn--loading' : ''}`}
                 disabled={isRefreshing}
               >
                 <RefreshCw className={`btn__icon ${isRefreshing ? 'spinning' : ''}`} />
@@ -435,6 +436,13 @@ const getLatestValue = (metric: MetricType) => {
                 <Download className="btn__icon" />
                 Export
               </button>
+              <button 
+                className="btn btn--outline"
+                onClick={() => navigate('/addVitals')}
+                >
+                <Plus size={18} />
+                Record Vitals
+            </button>
             </div>
           </div>
         </div>
