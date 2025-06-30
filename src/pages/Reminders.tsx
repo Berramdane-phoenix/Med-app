@@ -497,9 +497,9 @@ interface Reminder {
                     {!showForm && (
                     <button 
                         onClick={() => setShowForm(true)}
-                        className="empty-state__action"
+                        className="d-flex justify-content-center empty-state__action"
                     >
-                        <Plus className="empty-state__action-icon" aria-hidden="true" />
+                        <Plus className="empty-state__action-icon" size={16} aria-hidden="true" />
                         Add Your First Reminder
                     </button>
                     )}

@@ -410,7 +410,7 @@ const getLatestValue = (metric: MetricType) => {
           <div className="header-content">
             <button 
                 onClick={() => navigate('/dashboard')}
-                className="btn btn--ghost btn--icon header-back "
+                className="btn btn--primary btn--small"
               >
                 <ArrowLeft />
               </button>

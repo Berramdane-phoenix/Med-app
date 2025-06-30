@@ -159,7 +159,7 @@ function AppRoutes() {
       </Route>
   
       {/* Root redirect */}
-    
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
     
     </Routes>
   );

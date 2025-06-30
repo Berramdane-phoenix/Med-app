@@ -140,7 +140,7 @@ import {
 
             <div className="vitals-controls">
                 <button 
-                    className="btn btn--primary vitals-header__add-btn"
+                    className="btn btn--primary mb-3 "
                         onClick={() => setShowForm(true)}
                     >
                     <Plus size={18} />
