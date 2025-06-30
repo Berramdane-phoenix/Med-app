@@ -148,3 +148,15 @@
     }
   }
 }
+
+.ft-link {
+  display: block;
+  padding: $spacing-1;
+  border-radius: $border-radius-md;
+  margin-left: .5rem;
+  transition: $transition-normal;
+  &:hover {
+    background-color: $neutral-200;
+    transform: scale(1.1);
+  }
+}
