@@ -9,7 +9,7 @@
 
 ## Medicare — Full-Stack Medical Dashboard
 
-This project represents my first full-stack application, built entirely as a self-taught developer. It began with UI prototyping on Bolt.new, which was helpful in early design exploration. However, when the free token expired and I found only static styles downloadable — without reusable components or logic — I chose to rebuild the app completely from scratch. This approach gave me full control over all components, application logic, and backend integration.
+This project represents **my first full-stack application**, built entirely as a self-taught developer. It began with UI prototyping on Bolt.new, which was helpful in early design exploration. However, when the free token expired and I found only static styles downloadable — without reusable components or logic — I chose to rebuild the app completely from scratch. This approach gave me full control over all components, application logic, and backend integration.
 
 ### Project Overview
 
