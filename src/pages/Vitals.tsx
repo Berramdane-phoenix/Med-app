@@ -1,431 +1,578 @@
-import React, { useState, useEffect } from 'react'
-import { supabase, VitalRecord } from '@/lib/supabase'
-import { 
-  Heart, 
-  Thermometer, 
-  Activity, 
-  Weight, 
-  Ruler, 
-  Plus, 
-  Search, 
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/lib/supabase';
+import { useAuthStore } from '@/lib/store';
+import { toast } from 'sonner';
+import { format, subDays, subWeeks, subMonths, startOfDay, endOfDay, parseISO } from 'date-fns';
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend
+} from 'recharts';
+import {
+  Heart,
+  Activity,
+  Thermometer,
+  Zap,
   Calendar,
-  X,
-  Save,
-  AlertCircle,
-  CheckCircle2,
-  Loader2
-} from 'lucide-react'
-import { format } from 'date-fns'
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Plus,
+  Filter,
+  Download,
+  RefreshCw,
+  ArrowLeft
+} from 'lucide-react';
 
-const Vitals: React.FC = () => {
-  const [vitals, setVitals] = useState<VitalRecord[]>([])
-  const [loading, setLoading] = useState(true)
-  const [showForm, setShowForm] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null)
-  const [submitting, setSubmitting] = useState(false)
 
-  const [formData, setFormData] = useState<Partial<VitalRecord>>({
-    patient_id: '',
-    patient_name: '',
-    systolic_bp: undefined,
-    diastolic_bp: undefined,
-    heart_rate: undefined,
-    temperature: undefined,
-    oxygen_saturation: undefined,
-    weight: undefined,
-    height: undefined,
-    recorded_by: 'Healthcare Provider',
-    notes: ''
-  })
+interface VitalRecord {
+  id: string;
+  user_id: string;
+  heart_rate: number | null;
+  blood_pressure: string | null;      
+  temperature: number | null;
+  oxygen_saturation?: number | null;  
+  created_at: string;                    
+  notes?: string | null;
+  blood_pressure_systolic?: number;
+  blood_pressure_diastolic?: number;
+}
 
-  useEffect(() => {
-    fetchVitals()
-  }, [])
+interface ChartDataPoint {
+  date: string;
+  displayDate: string;
+  heart_rate?: number;
+  blood_pressure_systolic?: number;
+  blood_pressure_diastolic?: number;
+  temperature?: number;
+  oxygen_saturation?: number;
+}
+
+type TimeRange = 'day' | 'week' | 'month';
+type MetricType = 'heart_rate' | 'blood_pressure' | 'temperature' | 'oxygen_saturation';
+
+const VitalsPage: React.FC = () => {
+  const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  
+  const [vitals, setVitals] = useState<VitalRecord[]>([]);
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState<TimeRange>('week');
+  const [selectedMetric, setSelectedMetric] = useState<MetricType>('heart_rate');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const metricConfig = {
+    heart_rate: {
+      label: 'Heart Rate',
+      unit: 'bpm',
+      color: '#ef4444',
+      icon: Heart,
+      normalRange: { min: 60, max: 100 },
+      chartType: 'line' as const
+    },
+    blood_pressure: {
+      label: 'Blood Pressure',
+      unit: 'mmHg',
+      color: '#f59e0b',
+      icon: Activity,
+      normalRange: { systolic: { min: 90, max: 140 }, diastolic: { min: 60, max: 90 } },
+      chartType: 'area' as const
+    },
+    temperature: {
+      label: 'Temperature',
+      unit: '°F',
+      color: '#06b6d4',
+      icon: Thermometer,
+      normalRange: { min: 97.0, max: 99.5 },
+      chartType: 'line' as const
+    },
+    oxygen_saturation: {
+      label: 'Oxygen Saturation',
+      unit: '%',
+      color: '#10b981',
+      icon: Zap,
+      normalRange: { min: 95, max: 100 },
+      chartType: 'bar' as const
+    }
+  };
+
+  const parseBloodPressure = (bp: string | null) => {
+    if (!bp) return { systolic: undefined, diastolic: undefined };
+    const parts = bp.split('/');
+    if (parts.length !== 2) return { systolic: undefined, diastolic: undefined };
+    const systolic = Number(parts[0]);
+    const diastolic = Number(parts[1]);
+    if (isNaN(systolic) || isNaN(diastolic)) return { systolic: undefined, diastolic: undefined };
+    return { systolic, diastolic };
+  };
 
   const fetchVitals = async () => {
-    try {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from('vitals')
-        .select('*')
-        .order('recorded_at', { ascending: false })
+  if (!user?.id) return;  // safer null check
 
-      if (error) throw error
-      setVitals(data || [])
-    } catch (error) {
-      console.error('Error fetching vitals:', error)
-      showNotification('error', 'Failed to load vitals data')
-    } finally {
-      setLoading(false)
+  try {
+    setLoading(true);
+
+    const endDate = new Date();
+    let startDate: Date;
+
+    switch (timeRange) {
+      case 'day':
+        startDate = subDays(endDate, 1);
+        break;
+      case 'week':
+        startDate = subDays(endDate, 7);
+        break;
+      case 'month':
+        startDate = subMonths(endDate, 1);
+        break;
+      default:
+        startDate = subDays(endDate, 7);
     }
-  }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    const { data, error } = await supabase
+      .from('vitals')
+      .select('*')
+      .eq('user_id', user.id)
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString())
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+
+    const processedData = (data ?? []).map((record: VitalRecord) => {
+      const { systolic, diastolic } = parseBloodPressure(record.blood_pressure);
+      return {
+        ...record,
+        blood_pressure_systolic: systolic,
+        blood_pressure_diastolic: diastolic,
+      };
+    });
+
+    setVitals(processedData);
+    processChartData(processedData);
+  } catch (error: any) {
+    console.error('Error fetching vitals:', error);
+    toast.error('Failed to load vitals data');
+  } finally {
+    setLoading(false);
+  }
+};
+
+const processChartData = (data: VitalRecord[]) => {
+  const processedData: ChartDataPoint[] = data.map(record => ({
+    date: record.created_at,
+    displayDate: format(parseISO(record.created_at), timeRange === 'day' ? 'HH:mm' : 'MMM dd'),
+    heart_rate: record.heart_rate ?? undefined,
+    blood_pressure_systolic: record.blood_pressure_systolic ?? undefined,
+    blood_pressure_diastolic: record.blood_pressure_diastolic ?? undefined,
+    temperature: record.temperature ?? undefined,
+    oxygen_saturation: record.oxygen_saturation ?? undefined,
+  }));
+
+  setChartData(processedData);
+};
+
+const handleRefresh = async () => {
+  setIsRefreshing(true);
+  await fetchVitals();
+  setTimeout(() => setIsRefreshing(false), 500);
+};
+
+const getLatestValue = (metric: MetricType) => {
+  const latest = vitals[vitals.length - 1];
+  if (!latest) return null;
+
+  switch (metric) {
+    case 'heart_rate':
+      return latest.heart_rate ?? null;
+    case 'blood_pressure':
+      return latest.blood_pressure_systolic && latest.blood_pressure_diastolic
+        ? `${latest.blood_pressure_systolic}/${latest.blood_pressure_diastolic}`
+        : null;
+    case 'temperature':
+      return latest.temperature ?? null;
+    case 'oxygen_saturation':
+      return latest.oxygen_saturation ?? null;
+    default:
+      return null;
+  }
+};
+
+  const getTrend = (metric: MetricType) => {
+    if (vitals.length < 2) return 'stable';
     
-    if (!formData.patient_id || !formData.patient_name) {
-      showNotification('error', 'Patient ID and name are required')
-      return
+    const latest = vitals[vitals.length - 1];
+    const previous = vitals[vitals.length - 2];
+    
+    let latestValue: number | null = null;
+    let previousValue: number | null = null;
+    
+    switch (metric) {
+  case 'heart_rate':
+    latestValue = latest.heart_rate ?? null;
+    previousValue = previous.heart_rate ?? null;
+    break;
+  case 'blood_pressure':
+    latestValue = latest.blood_pressure_systolic ?? null;
+    previousValue = previous.blood_pressure_systolic ?? null;
+    break;
+  case 'temperature':
+    latestValue = latest.temperature ?? null;
+    previousValue = previous.temperature ?? null;
+    break;
+  case 'oxygen_saturation':
+    latestValue = latest.oxygen_saturation ?? null;
+    previousValue = previous.oxygen_saturation ?? null;
+    break;
+}
+    
+    if (!latestValue || !previousValue) return 'stable';
+    
+    const difference = latestValue - previousValue;
+    const threshold = latestValue * 0.05; // 5% threshold
+    
+    if (Math.abs(difference) < threshold) return 'stable';
+    return difference > 0 ? 'up' : 'down';
+  };
+
+  const renderChart = () => {
+    if (chartData.length === 0) {
+      return (
+        <div className="vitals-page__empty-chart">
+          <Activity className="empty-chart__icon" />
+          <p className="empty-chart__text">No data available for the selected time range</p>
+        </div>
+      );
     }
 
-    try {
-      setSubmitting(true)
-      const vitalRecord: VitalRecord = {
-        ...formData,
-        recorded_at: new Date().toISOString(),
-      } as VitalRecord
-
-      const { error } = await supabase
-        .from('vitals')
-        .insert([vitalRecord])
-
-      if (error) throw error
-
-      showNotification('success', 'Vitals recorded successfully')
-      resetForm()
-      setShowForm(false)
-      fetchVitals()
-    } catch (error) {
-      console.error('Error saving vitals:', error)
-      showNotification('error', 'Failed to save vitals')
-    } finally {
-      setSubmitting(false)
+    const config = metricConfig[selectedMetric];
+    
+    switch (config.chartType) {
+      case 'line':
+        return (
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis 
+                dataKey="displayDate" 
+                stroke="#64748b"
+                fontSize={12}
+                tickLine={false}
+              />
+              <YAxis 
+                stroke="#64748b"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'white',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <Line
+                type="monotone"
+                dataKey={selectedMetric}
+                stroke={config.color}
+                strokeWidth={3}
+                dot={{ fill: config.color, strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, stroke: config.color, strokeWidth: 2 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        );
+        
+      case 'area':
+        return (
+          <ResponsiveContainer width="100%" height={400}>
+            <AreaChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis 
+                dataKey="displayDate" 
+                stroke="#64748b"
+                fontSize={12}
+                tickLine={false}
+              />
+              <YAxis 
+                stroke="#64748b"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'white',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="blood_pressure_systolic"
+                stackId="1"
+                stroke="#f59e0b"
+                fill="#fef3c7"
+                name="Systolic"
+              />
+              <Area
+                type="monotone"
+                dataKey="blood_pressure_diastolic"
+                stackId="2"
+                stroke="#d97706"
+                fill="#fed7aa"
+                name="Diastolic"
+              />
+              <Legend />
+            </AreaChart>
+          </ResponsiveContainer>
+        );
+        
+      case 'bar':
+        return (
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis 
+                dataKey="displayDate" 
+                stroke="#64748b"
+                fontSize={12}
+                tickLine={false}
+              />
+              <YAxis 
+                stroke="#64748b"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'white',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <Bar
+                dataKey={selectedMetric}
+                fill={config.color}
+                radius={[4, 4, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        );
+        
+      default:
+        return null;
     }
-  }
+  };
 
-  const resetForm = () => {
-    setFormData({
-      patient_id: '',
-      patient_name: '',
-      systolic_bp: undefined,
-      diastolic_bp: undefined,
-      heart_rate: undefined,
-      temperature: undefined,
-      oxygen_saturation: undefined,
-      weight: undefined,
-      height: undefined,
-      recorded_by: 'Healthcare Provider',
-      notes: ''
-    })
-  }
-
-  const showNotification = (type: 'success' | 'error', message: string) => {
-    setNotification({ type, message })
-    setTimeout(() => setNotification(null), 5000)
-  }
-
-  const getVitalStatus = (vital: string, value: number | undefined) => {
-    if (!value) return 'normal'
-
-    const ranges = {
-      systolic_bp: { low: 90, high: 140, critical: 180 },
-      diastolic_bp: { low: 60, high: 90, critical: 110 },
-      heart_rate: { low: 60, high: 100, critical: 120 },
-      temperature: { low: 97.0, high: 99.5, critical: 101.0 },
-      oxygen_saturation: { low: 95, high: 100, critical: 90 }
+  useEffect(() => {
+    if (user) {
+      fetchVitals();
     }
+  }, [user, timeRange]);
 
-    const range = ranges[vital as keyof typeof ranges]
-    if (!range) return 'normal'
-
-    if (value < range.low) return 'low'
-    if (vital === 'oxygen_saturation' && value < range.critical) return 'critical'
-    if (vital !== 'oxygen_saturation' && value > range.critical) return 'critical'
-    if (value > range.high) return 'high'
-    return 'normal'
-  }
-
-  const filteredVitals = vitals.filter(vital =>
-    vital.patient_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    vital.patient_id.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
-  const handleFormClose = () => {
-    setShowForm(false)
-    resetForm()
+  if (loading) {
+    return (
+      <div className="vitals-page">
+        <div className="vitals-page__container">
+          <div className="vitals-page__loading">
+            <div className="loading-spinner">
+              <Activity className="loading-spinner__icon" />
+            </div>
+            <p className="loading-text">Loading vitals data...</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="vitals-container">
-      {notification && (
-        <div className={`notification notification--${notification.type}`}>
-          {notification.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
-          {notification.message}
-        </div>
-      )}
-
-      <div className="vitals-header">
-        <div className="vitals-header__content">
-          <h1 className="vitals-header__title">
-            <Activity className="vitals-header__icon" size={32} />
-            Patient Vitals
-          </h1>
-          <button 
-            className="btn btn--primary vitals-header__add-btn"
-            onClick={() => setShowForm(true)}
-          >
-            <Plus size={18} />
-            Record Vitals
-          </button>
-        </div>
-
-        <div className="vitals-controls">
-          <div className="search-box">
-            <Search className="search-box__icon" size={18} />
-            <input
-              type="text"
-              placeholder="Search by patient name or ID..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-box__input"
-            />
-          </div>
-        </div>
-      </div>
-
-      {showForm && (
-        <div className="vitals-form-overlay" onClick={(e) => e.target === e.currentTarget && handleFormClose()}>
-          <form className="vitals-form" onSubmit={handleSubmit}>
-            <div className="vitals-form__header">
-              <h2>Record New Vitals</h2>
+    <div className="vitals-page">
+      <div className="vitals-page__container">
+        {/* Header */}
+        <div className="vitals-page__header">
+          <div className="header-content">
+            <div className="header-info">
               <button 
-                type="button" 
-                className="btn btn--ghost"
-                onClick={handleFormClose}
+                onClick={() => navigate('/dashboard')}
+                className="btn btn--ghost btn--icon header-back"
               >
-                <X size={20} />
+                <ArrowLeft />
               </button>
-            </div>
-
-            <div className="vitals-form__content">
-              <div className="vitals-form__grid">
-                <div className="form-group">
-                  <label>Patient ID *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Enter patient ID"
-                    value={formData.patient_id || ''}
-                    onChange={(e) => setFormData({...formData, patient_id: e.target.value})}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Patient Name *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Enter patient name"
-                    value={formData.patient_name || ''}
-                    onChange={(e) => setFormData({...formData, patient_name: e.target.value})}
-                  />
-                </div>
-
-                <div className="form-group form-group--bp">
-                  <label>Blood Pressure (mmHg)</label>
-                  <div className="bp-inputs">
-                    <input
-                      type="number"
-                      placeholder="Systolic"
-                      value={formData.systolic_bp || ''}
-                      onChange={(e) => setFormData({...formData, systolic_bp: Number(e.target.value) || undefined})}
-                    />
-                    <span className="bp-separator">/</span>
-                    <input
-                      type="number"
-                      placeholder="Diastolic"
-                      value={formData.diastolic_bp || ''}
-                      onChange={(e) => setFormData({...formData, diastolic_bp: Number(e.target.value) || undefined})}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label>Heart Rate (bpm)</label>
-                  <input
-                    type="number"
-                    placeholder="Enter heart rate"
-                    value={formData.heart_rate || ''}
-                    onChange={(e) => setFormData({...formData, heart_rate: Number(e.target.value) || undefined})}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Temperature (°F)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    placeholder="Enter temperature"
-                    value={formData.temperature || ''}
-                    onChange={(e) => setFormData({...formData, temperature: Number(e.target.value) || undefined})}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Oxygen Saturation (%)</label>
-                  <input
-                    type="number"
-                    placeholder="Enter O2 saturation"
-                    value={formData.oxygen_saturation || ''}
-                    onChange={(e) => setFormData({...formData, oxygen_saturation: Number(e.target.value) || undefined})}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Weight (lbs)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    placeholder="Enter weight"
-                    value={formData.weight || ''}
-                    onChange={(e) => setFormData({...formData, weight: Number(e.target.value) || undefined})}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Height (inches)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    placeholder="Enter height"
-                    value={formData.height || ''}
-                    onChange={(e) => setFormData({...formData, height: Number(e.target.value) || undefined})}
-                  />
-                </div>
-
-                <div className="form-group form-group--full">
-                  <label>Notes</label>
-                  <textarea
-                    placeholder="Additional notes or observations..."
-                    value={formData.notes || ''}
-                    onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                    rows={3}
-                  />
-                </div>
+              <div>
+                <h1 className="header-title">Health Vitals</h1>
+                <p className="header-subtitle">
+                  Track and monitor your key health metrics over time
+                </p>
               </div>
             </div>
-
-            <div className="vitals-form__actions">
-              <button type="button" className="btn btn--secondary" onClick={handleFormClose}>
-                Cancel
+            <div className="header-actions">
+              <button
+                onClick={handleRefresh}
+                className={`btn btn--secondary ${isRefreshing ? 'btn--loading' : ''}`}
+                disabled={isRefreshing}
+              >
+                <RefreshCw className={`btn__icon ${isRefreshing ? 'spinning' : ''}`} />
+                Refresh
               </button>
-              <button type="submit" className="btn btn--primary" disabled={submitting}>
-                {submitting ? <Loader2 size={18} className="loading-icon" /> : <Save size={18} />}
-                {submitting ? 'Saving...' : 'Save Vitals'}
+              <button className="btn btn--outline">
+                <Download className="btn__icon" />
+                Export
               </button>
             </div>
-          </form>
-        </div>
-      )}
-
-      <div className="vitals-content">
-        {loading ? (
-          <div className="loading-state">
-            <Loader2 className="loading-icon" size={48} />
-            <p>Loading vitals data...</p>
           </div>
-        ) : (
-          <div className="vitals-grid">
-            {filteredVitals.map((vital) => (
-              <div key={vital.id} className="vital-card">
-                <div className="vital-card__header">
-                  <h3>{vital.patient_name}</h3>
-                  <div className="vital-card__header__meta">
-                    <span className="vital-card__header__id">ID: {vital.patient_id}</span>
-                    <div className="vital-card__header__date">
-                      <Calendar size={14} />
-                      {format(new Date(vital.recorded_at), 'MMM dd, yyyy HH:mm')}
-                    </div>
+        </div>
+
+        {/* Metrics Overview */}
+        <div className="vitals-page__metrics">
+          {Object.entries(metricConfig).map(([key, config]) => {
+            const metric = key as MetricType;
+            const IconComponent = config.icon;
+            const latestValue = getLatestValue(metric);
+            const trend = getTrend(metric);
+            
+            return (
+              <div
+                key={key}
+                className={`metric-card ${selectedMetric === metric ? 'metric-card--active' : ''}`}
+                onClick={() => setSelectedMetric(metric)}
+              >
+                <div className="metric-card__icon" style={{ backgroundColor: `${config.color}15` }}>
+                  <IconComponent style={{ color: config.color }} />
+                </div>
+                <div className="metric-card__content">
+                  <h3 className="metric-card__label">{config.label}</h3>
+                  <div className="metric-card__value">
+                    {latestValue ? `${latestValue} ${config.unit}` : 'No data'}
+                  </div>
+                  <div className={`metric-card__trend metric-card__trend--${trend}`}>
+                    {trend === 'up' && <TrendingUp className="trend-icon" />}
+                    {trend === 'down' && <TrendingDown className="trend-icon" />}
+                    {trend === 'stable' && <Minus className="trend-icon" />}
+                    <span className="trend-text">
+                      {trend === 'up' ? 'Increasing' : trend === 'down' ? 'Decreasing' : 'Stable'}
+                    </span>
                   </div>
                 </div>
+              </div>
+            );
+          })}
+        </div>
 
-                <div className="vital-card__measurements">
-                  {vital.systolic_bp && vital.diastolic_bp && (
-                    <div className={`measurement measurement--${getVitalStatus('systolic_bp', vital.systolic_bp)}`}>
-                      <Heart className="measurement__icon" />
-                      <div className="measurement__content">
-                        <span className="measurement__label">Blood Pressure</span>
-                        <span className="measurement__value">{vital.systolic_bp}/{vital.diastolic_bp} mmHg</span>
-                      </div>
-                    </div>
-                  )}
+        {/* Chart Section */}
+        <div className="vitals-page__chart-section">
+          <div className="chart-header">
+            <div className="chart-header__info">
+              <h2 className="chart-title">
+                {metricConfig[selectedMetric].label} Trends
+              </h2>
+              <p className="chart-subtitle">
+                {timeRange === 'day' ? 'Last 24 hours' : 
+                 timeRange === 'week' ? 'Last 7 days' : 'Last 30 days'}
+              </p>
+            </div>
+            <div className="chart-header__controls">
+              <div className="time-range-selector">
+                {(['day', 'week', 'month'] as TimeRange[]).map((range) => (
+                  <button
+                    key={range}
+                    onClick={() => setTimeRange(range)}
+                    className={`time-range-btn ${timeRange === range ? 'time-range-btn--active' : ''}`}
+                  >
+                    {range === 'day' ? '24H' : range === 'week' ? '7D' : '30D'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          <div className="chart-container">
+            {renderChart()}
+          </div>
+        </div>
 
+        {/* Recent Records */}
+        <div className="vitals-page__recent">
+          <div className="recent-header">
+            <h3 className="recent-title">Recent Readings</h3>
+            <button className="btn btn--ghost btn--small">
+              <Filter className="btn__icon" />
+              Filter
+            </button>
+          </div>
+          
+          <div className="recent-list">
+            {vitals.slice(-5).reverse().map((vital) => (
+              <div key={vital.id} className="recent-item">
+                <div className="recent-item__date">
+                  <Calendar className="date-icon" />
+                  <span className="date-text">
+                    {format(parseISO(vital.created_at), 'MMM dd, yyyy • h:mm a')}
+                  </span>
+                </div>
+                <div className="recent-item__values">
                   {vital.heart_rate && (
-                    <div className={`measurement measurement--${getVitalStatus('heart_rate', vital.heart_rate)}`}>
-                      <Activity className="measurement__icon" />
-                      <div className="measurement__content">
-                        <span className="measurement__label">Heart Rate</span>
-                        <span className="measurement__value">{vital.heart_rate} bpm</span>
-                      </div>
+                    <div className="value-item">
+                      <Heart className="value-icon" style={{ color: metricConfig.heart_rate.color }} />
+                      <span className="value-text">{vital.heart_rate} bpm</span>
                     </div>
                   )}
-
+                  {vital.blood_pressure_systolic && vital.blood_pressure_diastolic && (
+                    <div className="value-item">
+                      <Activity className="value-icon" style={{ color: metricConfig.blood_pressure.color }} />
+                      <span className="value-text">
+                        {vital.blood_pressure_systolic}/{vital.blood_pressure_diastolic} mmHg
+                      </span>
+                    </div>
+                  )}
                   {vital.temperature && (
-                    <div className={`measurement measurement--${getVitalStatus('temperature', vital.temperature)}`}>
-                      <Thermometer className="measurement__icon" />
-                      <div className="measurement__content">
-                        <span className="measurement__label">Temperature</span>
-                        <span className="measurement__value">{vital.temperature}°F</span>
-                      </div>
+                    <div className="value-item">
+                      <Thermometer className="value-icon" style={{ color: metricConfig.temperature.color }} />
+                      <span className="value-text">{vital.temperature}°F</span>
                     </div>
                   )}
-
                   {vital.oxygen_saturation && (
-                    <div className={`measurement measurement--${getVitalStatus('oxygen_saturation', vital.oxygen_saturation)}`}>
-                      <Activity className="measurement__icon" />
-                      <div className="measurement__content">
-                        <span className="measurement__label">O2 Saturation</span>
-                        <span className="measurement__value">{vital.oxygen_saturation}%</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {vital.weight && (
-                    <div className="measurement measurement--normal">
-                      <Weight className="measurement__icon" />
-                      <div className="measurement__content">
-                        <span className="measurement__label">Weight</span>
-                        <span className="measurement__value">{vital.weight} lbs</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {vital.height && (
-                    <div className="measurement measurement--normal">
-                      <Ruler className="measurement__icon" />
-                      <div className="measurement__content">
-                        <span className="measurement__label">Height</span>
-                        <span className="measurement__value">{vital.height} in</span>
-                      </div>
+                    <div className="value-item">
+                      <Zap className="value-icon" style={{ color: metricConfig.oxygen_saturation.color }} />
+                      <span className="value-text">{vital.oxygen_saturation}%</span>
                     </div>
                   )}
                 </div>
-
                 {vital.notes && (
-                  <div className="vital-card__notes">
-                    <strong>Notes:</strong> {vital.notes}
+                  <div className="recent-item__notes">
+                    <p className="notes-text">{vital.notes}</p>
                   </div>
                 )}
-
-                <div className="vital-card__footer">
-                  Recorded by: {vital.recorded_by}
-                </div>
               </div>
             ))}
-
-            {filteredVitals.length === 0 && !loading && (
-              <div className="empty-state">
-                <Activity size={48} />
-                <h3>No vitals recorded</h3>
-                <p>Start by recording the first set of patient vitals</p>
+            
+            {vitals.length === 0 && (
+              <div className="recent-empty">
+                <Activity className="empty-icon" />
+                <p className="empty-text">No vitals recorded yet</p>
               </div>
             )}
           </div>
-        )}
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Vitals
+export default VitalsPage;

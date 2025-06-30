@@ -241,7 +241,7 @@ const Dashboard = () => {
             <div className="header-info">
               <h1 className="header-title">Welcome back, {userName}!</h1>
               <p className="header-subtitle">Here's an overview of your health information.</p>
-              <div className="header-actions">
+              <div className="header-actions mb-3 mt-3">
                 <Link to="/appointments/book" className="btn btn--primary btn-sm">
                   <Calendar className="btn__icon" />
                   Book Appointment
@@ -593,7 +593,7 @@ const Dashboard = () => {
               )}
             </div>
             <div className="d-flex align-items-center justify-content-end mb-4 mr-4">
-              <Link to="/reminders" className="btn btn--ghost btn--small">
+              <Link to="/reminders" className="btn btn--outline btn--small">
                 View All <ChevronRight className="btn__icon" size={16} />
               </Link>
             </div>

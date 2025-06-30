@@ -5,6 +5,10 @@
   background: var(--color-bg-secondary);
   padding: var(--spacing-xl) var(--spacing-lg);
   border-radius: var(--radius-xl);
+  
+  @media (min-width: $breakpoint-lg) {
+    border-radius: 30px 0 0 0;
+  }
 
   @media (max-width: 768px) {
     padding: var(--spacing-lg) var(--spacing-md);
@@ -253,7 +257,7 @@
 
   &--checkbox {
     flex-direction: row;
-    align-items: center;
+    // align-items: center;
     gap: var(--spacing-md);
   }
 }

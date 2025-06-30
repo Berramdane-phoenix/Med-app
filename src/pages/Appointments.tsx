@@ -198,8 +198,8 @@ export default function Appointments() {
       <h3 className="empty-state__title">{title}</h3>
       <p className="empty-state__message">{message}</p>
       {showAction && (
-        <Link to={actionHref} className="ebtn btn-primary btn-lg">
-          <Plus className="empty-state__action-icon" aria-hidden="true" />
+        <Link to={actionHref} className="btn btn--primary btn-sm">
+          <Plus className="empty-state__action-icon mb-0" aria-hidden="true" />
           {actionText}
         </Link>
       )}
@@ -267,7 +267,7 @@ export default function Appointments() {
           className="calendar__nav"
           aria-label="Previous month"
         >
-          <ChevronLeft />
+          <ChevronLeft aria-hidden="true"/>
         </button>
         <h3>{format(new Date(calendarYear, calendarMonth), 'MMMM yyyy')}</h3>
         <button
@@ -275,7 +275,7 @@ export default function Appointments() {
           className="calendar__nav"
           aria-label="Next month"
         >
-          <ChevronRight />
+          <ChevronRight aria-hidden="true"/>
         </button>
       </div>
 
@@ -869,13 +869,13 @@ export default function Appointments() {
                             </>
                           )}
 
-                          {appointment.status.toLowerCase() === "cancelled" && category === "past" &&(
+                          {appointment.status.toLowerCase() === "cancelled" && (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleDelete(appointment.id);
                               }}
-                              className="btn btn-outline btn-warning btn-sm  ml-2"
+                              className="btn btn--warning  ml-2"
                               aria-label={`Delete cancelled appointment titled ${appointment.title}`}
                               type="button"
                             >
@@ -883,6 +883,7 @@ export default function Appointments() {
                               Delete
                             </button>
                           )}
+
                         </div>
                       </footer>
                     </article>

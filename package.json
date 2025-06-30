@@ -19,6 +19,8 @@
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
+    "@splinetool/react-spline": "^4.0.0",
+    "@splinetool/runtime": "^1.10.16",
     "@supabase/auth-helpers-react": "^0.5.0",
     "@supabase/supabase-js": "^2.50.0",
     "class-variance-authority": "^0.7.0",
