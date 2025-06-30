@@ -10,14 +10,14 @@ function Footer() {
       <div className="container">
         <div className="legal d-flex align-items-center justify-content-center ">
           <a className="ft-link  mr-3" href="https://www.netlify.com" target="_blank" rel="noopener noreferrer" aria-label="Netlify">
-            <img src="/public/assets/logo-netlify.svg" alt=""  width="30" height="30"/>
+            <img src="/assets/logo-netlify.svg" alt=""  width="30" height="30"/>
           </a>
 
           <a className="ft-link  mr-3" href="https://supabase.com" aria-label="Supabase">
-            <img src="/public/assets/logo-supabase.svg" alt="" width="30" height="30"/>
+            <img src="/assets/logo-supabase.svg" alt="" width="30" height="30"/>
           </a>
           <a className="ft-link  mr-3" href="https://bolt.new" aria-label="Bolt.new" >
-            <img src="/public/assets/logo-bolt.svg" alt="" width="30" height="30"/>
+            <img src="/assets/logo-bolt.svg" alt="" width="30" height="30"/>
           </a>
         </div>
         <div className="footer__bottom">
