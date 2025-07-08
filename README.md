@@ -1,15 +1,13 @@
 # 💊 Medicare – Your Personalized Health Companion
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)  
-[![Build Status](https://img.shields.io/github/actions/workflow/status/Berramdane-phoenix/Medicare-app/ci.yml?branch=main)](https://github.com/Berramdane-phoenix/Medicare-app/actions)  
-[![Version](https://img.shields.io/github/package-json/v/Berramdane-phoenix/Medicare-app)](https://github.com/Berramdane-phoenix/Medicare-app/releases)  
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)   
 [![Platform](https://img.shields.io/badge/Platform-React-blue)](https://reactjs.org/)
 
 ---
 
 ## Medicare — Full-Stack Medical Dashboard
 
-This project represents **my first full-stack application**, built entirely as a self-taught developer. It began with UI prototyping on Bolt.new, which was helpful in early design exploration. However, when the free token expired and I found only static styles downloadable — without reusable components or logic — I chose to rebuild the app completely from scratch. This approach gave me full control over all components, application logic, and backend integration.
+This project is my **FIRST full-stack application**, built independently as a self-taught developer. I began by prototyping the UI using Bolt.new, which was incredibly helpful for rapidly visualizing ideas and exploring design directions early on. Bolt’s intuitive interface accelerated my creative process. Building on that foundation, I refined the content structure and enhanced the layout logic to create fully customizable components, integrate backend functionality, and gain deeper control over the full stack — all while using Bolt as a launchpad for ideation.
 
 ### Project Overview
 
@@ -47,10 +45,26 @@ Future enhancements may include persisting user timezone preferences in their pr
 
 ## 🚀 Features
 
-- 💊 Set reminders for medications, checkups, or custom alerts  
 - 🧑‍⚕️ Browse and filter doctors by specialty, language, location, and rating  
 - 📄 View detailed doctor profiles with experience, education, reviews, and contact info  
-- 📅 Book, reschedule, cancel, or delete appointments from the database with real-time availability  
+
+- Book appointments with real-time slot availability
+•	View summary before submission
+•	Receive confirmation notifications
+•	Set appointment reminders (1 hour before)
+•	Reschedule, cancel, or delete appointments
+•	Filter past and upcoming appointments
+
+💊 Medical Records & Medications
+
+•	View and download medical records
+•	Medication management with reorder option
+
+🔔 Notifications & Reminders
+
+•	Real-time notifications (read/unread tracking)
+•	Custom reminders with priority levels (High, Medium, Low) 
+ 
 - 🔐 Two-Factor Authentication (2FA), session management, and secure user profiles powered by Supabase  
 - 📤 Export personal health data for sharing or backup  
 
